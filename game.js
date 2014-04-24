@@ -1,5 +1,9 @@
 (function($){
 
+	function log(text){
+		console.log(text);
+	}
+
 	var defaultConf = {
 		row: 15,
 		width: 36,
@@ -258,12 +262,14 @@
 		var num = connectX.call(that, r, c, color).num;
 		// 如果够5个子，直接返回当前个数
 		if(num >=5) return num;
-		num = connectY.call(that, r, c, color).num
+		num = connectY.call(that, r, c, color).num;
 		if(num >=5) return num;
-		num = connectXY.call(that, r, c, color).num
+		num = connectXY.call(that, r, c, color).num;
 		if(num >=5) return num;
-		num = connectYX.call(that, r, c, color).num
+		num = connectYX.call(that, r, c, color).num;
 		if(num >=5) return num;
+
+		return 1;
 
 	}
 
@@ -346,6 +352,8 @@
 
 			var n = connect.call(that, r, c, chessColor);
 
+			log('isWin:'+ n);
+
 			if(n >=5){
 				that.playerWin();
 				return;
@@ -380,8 +388,10 @@
 			this.play(maxX, maxY, this.robot);
 			this.robotLastChess = [maxX, maxY];
 
+			log(maxWeight);
+
 			// 权重达到最大，说明已连5子
-			if ((maxWeight >= 100000 && maxWeight < 250000) || (maxWeight >= 500000)) {
+			if (maxWeight >= 500000) {
 				this.showResult(false);
 				this.gameOver();
 			}
@@ -482,6 +492,8 @@
 		playerWin: function(){
 			this.showResult(true);
 			this.gameOver();
+
+			log('玩家win！')
 		},
 		gameOver: function(){
 			this.isStart = false;
