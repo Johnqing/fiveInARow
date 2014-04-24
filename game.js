@@ -322,6 +322,8 @@
 
 			that.isStart = true;
 
+			that.startBtn.text('重玩');
+
 		},
 		/**
 		 * 下棋
@@ -482,11 +484,11 @@
 			this.isOver = true;
 
 			if(isWin){
-				alert('恭喜！你赢啦！');
+				this.resultBox.text('恭喜！你赢啦！');
 				return
 			}
 
-			alert('亲，还需要努力啊！')
+			this.resultBox.text('亲，还需要努力啊！')
 
 		},
 		playerWin: function(){
@@ -520,17 +522,38 @@
 	// 继承这2个类
 	$.extend(FireRow.prototype, new Board(), new Chess());
 
-	FireRow.prototype.init = function(){
-		this.render();
-		this.clearBoard();
-		this.start();
-	}
-	FireRow.prototype.setConfig = function(config){
-		config = config || {};
-		for(var i in defaultConf){
-			this[i] = config[i] || defaultConf[i];
+	$.extend(FireRow.prototype, {
+		init: function(){
+
+			this.bind();
+
+			this.render();
+			this.clearBoard();
+			this.start();
+		},
+		bind: function(){
+			var that = this;
+			that.startBtn = $('#start');
+			that.startBtn.on('click', function(){
+				that.clearBoard();
+				var type = $(this).attr('data-type');
+				if(!type){
+					$(this).attr('data-type', 'restart');
+					$(this).text('重玩');
+					that.start();
+					return;
+				}
+				that.gameOver();
+
+			})
+		},
+		setConfig: function(config){
+			config = config || {};
+			for(var i in defaultConf){
+				this[i] = config[i] || defaultConf[i];
+			}
 		}
-	}
+	});
 	new FireRow('.board');
 
 })(jQuery);
