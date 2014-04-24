@@ -72,6 +72,181 @@
 		}
 	}
 	/**
+	 * x轴连子个数，前后是否截断
+	 * @param r
+	 * @param c
+	 * @param color
+	 * @returns {{num: number, b: number, a: number}}
+	 */
+	var connectX = function(r, c, color){
+		var that = this;
+		var num = 1;
+		var _color;
+		var x,
+			before = 0,
+			after = 0;
+
+		// 之前连接了多少个
+		for(x = c-1; x>=0; x--){
+			_color = that.chessArr[r][x];
+			if( _color == color){
+				num++;
+			} else {
+				if(_color == 0) before = 1;
+				break;
+			}
+		}
+		// 之后连接了多少个
+		for(x = c+1; x<that.row; x++){
+			_color = that.chessArr[r][x];
+			if(_color == color){
+				num++;
+			} else{
+				if(_color == 0) after = 1;
+				break
+			}
+		}
+
+		return {
+			num: num,
+			b: before,
+			a: after
+		}
+	}
+
+	/**
+	 * Y轴连子个数，前后是否截断
+	 * @param r
+	 * @param c
+	 * @param color
+	 * @returns {{num: number, b: number, a: number}}
+	 */
+	var connectY = function(r, c, color){
+		var that = this;
+		var num = 1;
+		var _color;
+		var y,
+			before = 0,
+			after = 0;
+
+		// 之前连接了多少个
+		for(y = r-1; y>=0; y--){
+			_color = that.chessArr[y][c];
+			if(_color == color){
+				num++;
+			} else {
+				if(_color == 0) before = 1;
+				break;
+			}
+		}
+
+		// Y之后连接了多少个
+		for(y = r+1; y<that.row; y++){
+			_color = that.chessArr[y][c];
+			if(_color == color){
+				num++;
+			} else{
+				if(_color == 0) after = 1;
+				break
+			}
+		}
+
+		return {
+			num: num,
+			b: before,
+			a: after
+		}
+	}
+
+	/**
+	 * \ 连子个数，前后是否截断
+	 * @param r
+	 * @param c
+	 * @param color
+	 * @returns {{num: number, b: number, a: number}}
+	 */
+	var connectXY = function(r, c, color){
+		var that = this;
+		var num = 1;
+		var _color;
+		var x, y,
+			before = 0,
+			after = 0;
+
+		// \ => 之前的
+		for(x = r-1, y = c-1; x>=0 && y>=0; x--, y--){
+			_color = that.chessArr[x][y];
+			if(_color == color){
+				num++;
+			} else{
+				if(_color == 0) before = 1;
+				break
+			}
+		}
+
+		// \ => 之后的
+		for(x = r + 1, y = c + 1; x < that.row && y < that.row; x++, y++){
+			_color = that.chessArr[x][y];
+			if(_color == color){
+				num++;
+			} else{
+				if(_color == 0) after = 1;
+				break
+			}
+		}
+
+		return {
+			num: num,
+			b: before,
+			a: after
+		}
+	}
+
+	/**
+	 * / 连子个数，前后是否截断
+	 * @param r
+	 * @param c
+	 * @param color
+	 * @returns {{num: number, b: number, a: number}}
+	 */
+	var connectYX = function(r, c, color){
+		var that = this;
+		var num = 1;
+		var _color;
+		var x, y,
+			before = 0,
+			after = 0;
+
+		// / => 之前的
+		for(x = r-1, y = c+1; x>=0 && y<that.row; x--, y++){
+			_color = that.chessArr[x][y];
+			if(_color == color){
+				num++;
+			} else{
+				if(_color == 0) before = 1;
+				break
+			}
+		}
+
+		// / => 之后的
+		for(x = r + 1, y = c - 1; x < that.row && y >=0; x++, y--){
+			_color = that.chessArr[x][y];
+			if(_color == color){
+				num++;
+			} else{
+				if(_color == 0) after = 1;
+				break
+			}
+		}
+
+		return {
+			num: num,
+			b: before,
+			a: after
+		}
+	}
+
+	/**
 	 * 连子个数
 	 * @param r
 	 * @param c
@@ -80,90 +255,14 @@
 	 */
 	var connect =  function(r, c, color){
 		var that = this;
-		var num = 1;
-		var x, y;
-
-		// x轴 => 当前下子位置之前连接了多少个
-		for(x = c-1; x>=0; x--){
-			if(that.chessArr[r][x] == color){
-				num++;
-			} else {
-				break;
-			}
-		}
-		// x轴 => 当前下子位置之后连接了多少个
-		for(x = c+1; x<that.row; x++){
-			if(that.chessArr[r][x] == color){
-				num++;
-			} else{
-				break
-			}
-		}
+		var num = connectX.call(that, r, c, color).num;
 		// 如果够5个子，直接返回当前个数
 		if(num >=5) return num;
-		// 一个方向连接个数不够5个，其实就是1个
-		num = 1;
-
-		// Y轴 => 当前下子位置之前连接了多少个
-
-		for(y = r-1; y>=0; y--){
-			if(that.chessArr[y][c] == color){
-				num++;
-			} else {
-				break;
-			}
-		}
-
-		// Y轴 => 当前下子位置之后连接了多少个
-
-		for(y = r+1; y<that.row; y++){
-			if(that.chessArr[y][c] == color){
-				num++;
-			} else{
-				break
-			}
-		}
-
+		num = connectY.call(that, r, c, color).num
 		if(num >=5) return num;
-
-		// \ => 之前的
-		for(x = r-1, y = c-1; x>=0 && y>=0; x--, y--){
-			if(that.chessArr[x][y] == color){
-				num++;
-			} else{
-				break
-			}
-		}
-
-		// \ => 之后的
-		for(x = r + 1, y = c + 1; x < that.row && y < that.row; x++, y++){
-			if(that.chessArr[x][y] == color){
-				num++;
-			} else{
-				break
-			}
-		}
-
+		num = connectXY.call(that, r, c, color).num
 		if(num >=5) return num;
-
-		// / => 之前的
-		for(x = r-1, y = c+1; x>=0 && y<that.row; x--, y++){
-			if(that.chessArr[x][y] == color){
-				num++;
-			} else{
-				break
-			}
-		}
-
-		// / => 之后的
-		for(x = r + 1, y = c - 1; x < that.row && y >=0; x++, y--){
-			if(that.chessArr[x][y] == color){
-				num++;
-			} else{
-				break
-			}
-		}
-
+		num = connectYX.call(that, r, c, color).num
 		if(num >=5) return num;
 
 	}
@@ -266,7 +365,8 @@
 				x, y, tem;
 			for (x = that.row-1; x >= 0; x--) {
 				for (y = that.row-1; y >= 0; y--) {
-					if (that.chessArr[x][y] !== 0) {
+					var _color = that.chessArr[x][y];
+					if (_color !== 0) {
 						continue;
 					}
 					tem = this.robotAutoPlay(x, y);
@@ -279,6 +379,8 @@
 			}
 			this.play(maxX, maxY, this.robot);
 			this.robotLastChess = [maxX, maxY];
+
+			// 权重达到最大，说明已连5子
 			if ((maxWeight >= 100000 && maxWeight < 250000) || (maxWeight >= 500000)) {
 				this.showResult(false);
 				this.gameOver();
@@ -289,10 +391,93 @@
 
 
 		},
-		// TODO: 机器人实现
-		robotAutoPlay: function(r, c){},
+		// 机器人实现(基于权重)
+		robotAutoPlay: function(r, c){
+			var that = this;
+			var rbRow = that.row-1;
+			// 棋盘上的权重
+			var w = rbRow - Math.abs(r - rbRow/2) - Math.abs(c - rbRow/2);
+			var color = that.robot == 'blank' ? that.blankChess : that.whiteChess;
+
+			var obj = connectX.call(that, r, c, color);
+			// 机器人权重
+			w += that.getWeight(obj, 1);
+			// 玩家权重
+			obj = connectX.call(that, r, c, -color);
+			w += that.getWeight(obj);
+
+			obj = connectY.call(that, r, c, color);
+			// 机器人权重
+			w += that.getWeight(obj, 1);
+			// 玩家权重
+			obj = connectY.call(that, r, c, -color);
+			w += that.getWeight(obj);
+
+			obj = connectXY.call(that, r, c, color);
+			// 机器人权重
+			w += that.getWeight(obj, 1);
+			// 玩家权重
+			obj = connectXY.call(that, r, c, -color);
+			w += that.getWeight(obj);
+
+			obj = connectYX.call(that, r, c, color);
+			// 机器人权重
+			w += that.getWeight(obj, 1);
+			// 玩家权重
+			obj = connectYX.call(that, r, c, -color);
+			w += that.getWeight(obj);
+			return w;
+		},
+		getWeight: function(info, isRobot){
+			var w = 0
+
+			var b = info.b,
+				a = info.a
+			// 通过落子数量来区分权重
+			switch (info.num){
+				case 1:
+					a && b && (w = isRobot ? 15 : 10);
+					break;
+				case 2:
+					if(a && b){
+						w = isRobot ? 100 : 50;
+					} else if(a || b) {
+						w = isRobot ? 10 : 5;
+					}
+					break;
+				case 3:
+					if(a && b){
+						w = isRobot ? 500 : 200;
+					} else if(a || b) {
+						w = isRobot ? 30 : 20;
+					}
+					break;
+				case 4:
+					if(a && b){
+						w = isRobot ? 5000 : 2000;
+					} else if(a || b) {
+						w = isRobot ? 300 : 200;
+					}
+					break;
+				case 5:
+					w = isRobot ? 500000 : 200000;
+					break;
+
+			}
+
+			return w;
+
+		},
 		showResult: function(isWin){
 			this.isOver = true;
+
+			if(isWin){
+				alert('恭喜！你赢啦！');
+				return
+			}
+
+			alert('亲，还需要努力啊！')
+
 		},
 		playerWin: function(){
 			this.showResult(true);
