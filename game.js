@@ -448,30 +448,38 @@
 			// 通过落子数量来区分权重
 			switch (info.num){
 				case 1:
+					// *
 					a && b && (w = isRobot ? 15 : 10);
 					break;
 				case 2:
 					if(a && b){
+						// **
 						w = isRobot ? 100 : 50;
 					} else if(a || b) {
+						// +**
 						w = isRobot ? 10 : 5;
 					}
 					break;
 				case 3:
 					if(a && b){
+						// ***
 						w = isRobot ? 500 : 200;
 					} else if(a || b) {
+						// +***
 						w = isRobot ? 30 : 20;
 					}
 					break;
 				case 4:
 					if(a && b){
+						//****
 						w = isRobot ? 5000 : 2000;
 					} else if(a || b) {
+						// +****
 						w = isRobot ? 300 : 200;
 					}
 					break;
 				case 5:
+					// ***** | +*****
 					w = isRobot ? 500000 : 200000;
 					break;
 
